@@ -5,7 +5,7 @@ A small Javascript utility class to allow easy connection and communication with
 It is designed to work with Kyle Coburn's secret-hitler: https://github.com/kylecoburn/secret-hitler.git
 
 Named after Alan Turing's (with a few other contributors) invention, the Bombe, which during World War II assisted in deciphering German communications. 
-See https://en.wikipedia.org/wiki/Bombe.
+See https://wikipedia.org/wiki/Bombe.
 
 
 ## Installation
