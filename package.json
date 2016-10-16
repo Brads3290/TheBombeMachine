@@ -1,6 +1,6 @@
 {
   "name": "thebombemachine",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Facilitates sending messages easily to a Secret Hitler online server (https://github.com/kylecoburn/secret-hitler.git)",
   "main": "TheBombe.js",
   "scripts": {
