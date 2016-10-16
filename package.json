@@ -1,7 +1,7 @@
 {
   "name": "thebombemachine",
-  "version": "1.0.0",
-  "description": "Facilitates sending messages easily to a Secret Hitler online server (https://github.com/kylecoburn/secret-hitler.git). Named after Alan Turing's \"Bombe\"",
+  "version": "1.0.2",
+  "description": "Facilitates sending messages easily to a Secret Hitler online server (https://github.com/kylecoburn/secret-hitler.git)",
   "main": "TheBombe.js",
   "scripts": {
     "test": "console.log(\"Test\");"

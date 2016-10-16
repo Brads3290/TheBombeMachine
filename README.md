@@ -14,13 +14,12 @@ See https://wikipedia.org/wiki/Bombe.
     
 ## Usage
 ### Instantiation
+    //Node.js
     var BombeMachine = require("thebombemachine");
+    var Bombe = new BombeMachine(custom_server_URL [optional]);
     
-    var Bombe = new BombeMachine();
-    
-or
-
-    var Bombe = new BombeMachine(custom_server_URL);
+    //Vanilla JavaScript
+    var Bombe = new BombeMachine(custom_server_URL [optional]);
     
 ### Set up connection
     Bombe.doSetup(callback_function);
