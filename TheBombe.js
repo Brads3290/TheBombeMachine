@@ -45,6 +45,7 @@
 
         this.logOutgoing = true; //Log outgoing messages to the console
         this.logIncoming = true; //Log incoming messages to the console
+        this.logPings = true; //Log server ping activity
     }
     BombeMachine.prototype = {}; // "Reset" the prototype
 
@@ -57,7 +58,7 @@
     //noinspection JSUnusedGlobalSymbols
     BombeMachine.prototype.autoLogging = function (doAutoLogging) {
         //Set both outgoing and incoming log flags
-        this.logIncoming = this.logOutgoing = doAutoLogging;
+        this.logIncoming = this.logOutgoing = this.logPings = doAutoLogging;
     };
 
     /** makeFirstContact
@@ -211,7 +212,7 @@
                 self.send = function (data) {
                     //If logging is enabled, log.
                     if (self.logOutgoing) {
-                        console.log("Send: " + data);
+                        console.log("[BombeMachine] Send: " + data);
                     }
 
                     //Send data to server
@@ -233,13 +234,18 @@
                         //Remove it from the queue
                         ping_callbacks.splice(0, 1);
 
+                        //Log if necessary
+                        if (self.logPings) {
+                            console.log("[BombeMachine] Successfully pinged server.");
+                        }
+
                         //Call it
                         cb();
                     } else { //Otherwise (if the message is not a pong), handle normally.
 
                         //Log if logging is enabled
                         if (self.logIncoming) {
-                            console.log("Receive: " + event.data);
+                            console.log("[BombeMachine] Receive: " + event.data);
                         }
 
                         //Iterate through the list of handlers and call each
