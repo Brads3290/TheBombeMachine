@@ -185,13 +185,17 @@
 
                 //noinspection JSUnusedGlobalSymbols
                 self.onReceive = function (handler) {
-                    handlers.incoming[handler_id++] = handler;
-                    return handler_id;
+                    var id = handler_id++;
+
+                    handlers.incoming[id] = handler;
+                    return id;
                 };
                 //noinspection JSUnusedGlobalSymbols
                 self.onSend = function (handler) {
-                    handlers.outgoing[handler_id++] = handler;
-                    return handler_id;
+                    var id = handler_id++;
+
+                    handlers.outgoing[id] = handler;
+                    return id;
                 };
                 //noinspection JSUnusedGlobalSymbols
                 self.removeHandler = function (id) {
