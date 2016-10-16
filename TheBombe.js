@@ -77,7 +77,7 @@
 
         console.log("BombeMachine making first contact..");
 
-        var URL = self.URL + "/socket.io/?EIO=3&transport=polling&t=" + Math.random(); //The URL, including a random UID
+        var URL = self.URL + "socket.io/?EIO=3&transport=polling&t=" + Math.random(); //The URL, including a random UID
         var method = "GET"; //The method used to send data to the server
 
         //Instantiate the request handler object
