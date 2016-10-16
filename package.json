@@ -1,0 +1,32 @@
+{
+  "name": "thebombemachine",
+  "version": "1.0.0",
+  "description": "Facilitates sending messages easily to a Secret Hitler online server (https://github.com/kylecoburn/secret-hitler.git). Named after Alan Turing's \"Bombe\"",
+  "main": "TheBombe.js",
+  "scripts": {
+    "test": "console.log(\"Test\");"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Brads3290/TheBombeMachine.git"
+  },
+  "keywords": [
+    "secrethitler",
+    "secret",
+    "hitler",
+    "websockets",
+    "bombe",
+    "bombe",
+    "machine"
+  ],
+  "author": "Brad Sullivan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Brads3290/TheBombeMachine/issues"
+  },
+  "homepage": "https://github.com/Brads3290/TheBombeMachine#readme",
+  "dependencies": {
+    "ws": "^1.1.1",
+    "xhr2": "^0.1.3"
+  }
+}

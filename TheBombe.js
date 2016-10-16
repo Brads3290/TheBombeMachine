@@ -182,20 +182,20 @@
             //Ping handler queue.
             var ping_callbacks = [];
 
-            self.prototype.onreceive = function (handler) {
+            self.prototype.onReceive = function (handler) {
                 handlers.incoming[handler_id++] = handler;
             };
-            self.prototype.onsend = function (handler) {
+            self.prototype.onSend = function (handler) {
                 handlers.outgoing[handler_id++] = handler;
             };
-            self.prototype.removehandler = function (id) {
+            self.prototype.removeHandler = function (id) {
                 //Check for the ID in each of the handler lists and delete accordingly.
                 if (handlers.incoming[id]) {
                     delete handlers.incoming[id];
                 } else if (handlers.outgoing[id]) {
                     delete handlers.outgoing[id];
                 } else { //Otherwiser error
-                    throw {e: "[BombeMachine.removehandler] Invalid ID."};
+                    throw {e: "[BombeMachine.removeHandler] Invalid ID."};
                 }
             };
             self.prototype.send = function (data) {
@@ -274,7 +274,7 @@
                 clearInterval(autoPingID);
 
                 autoPingID = null;
-            }
+            };
 
             //Finished. Call the callback.
             callback();
@@ -287,9 +287,9 @@
             e: "[BombeMachine] Unable to call function. Bombe machine not fully set up."
         }
     }
-    BombeMachine.prototype.onreceive = not_implemented;
-    BombeMachine.prototype.onsend = not_implemented;
-    BombeMachine.prototype.removehandler = not_implemented;
+    BombeMachine.prototype.onReceive = not_implemented;
+    BombeMachine.prototype.onSend = not_implemented;
+    BombeMachine.prototype.removeHandler = not_implemented;
     BombeMachine.prototype.send = not_implemented;
     BombeMachine.prototype.ping = not_implemented;
     BombeMachine.prototype.startAutoPing = not_implemented;
@@ -304,7 +304,10 @@
     BombeMachine.prototype.doSetup = function (callback) {
         var self = this;
         self.makeFirstContact(function () {
-            self.connectWebsocket(callback);
+            self.connectWebsocket(function () {
+                self.startAutoPing();
+                callback();
+            });
         });
     };
 
