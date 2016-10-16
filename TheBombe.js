@@ -167,120 +167,154 @@
 
         //And wait until it has finished establishing a connection to the server
         self.websocket.onopen = function () {
-            /** Set up the BombeMachine websocket functions **/
+            /** setup
+             * Set up the BombeMachine websocket functions
+             */
+            function setup(setup_cb) {
+                //Used to delete event handlers
+                var handler_id = 0;
 
-            //Used to delete event handlers
-            var handler_id = 0;
+                //Event handler list
+                var handlers = {
+                    incoming: {},
+                    outgoing: {}
+                };
 
-            //Event handler list
-            var handlers = {
-                incoming: {},
-                outgoing: {}
-            };
+                //Ping handler queue.
+                var ping_callbacks = [];
 
-            //Ping handler queue.
-            var ping_callbacks = [];
-
-            //noinspection JSUnusedGlobalSymbols
-            self.onReceive = function (handler) {
-                handlers.incoming[handler_id++] = handler;
-            };
-            //noinspection JSUnusedGlobalSymbols
-            self.onSend = function (handler) {
-                handlers.outgoing[handler_id++] = handler;
-            };
-            //noinspection JSUnusedGlobalSymbols
-            self.removeHandler = function (id) {
-                //Check for the ID in each of the handler lists and delete accordingly.
-                if (handlers.incoming[id]) {
-                    delete handlers.incoming[id];
-                } else if (handlers.outgoing[id]) {
-                    delete handlers.outgoing[id];
-                } else { //Otherwiser error
-                    throw {e: "[BombeMachine.removeHandler] Invalid ID."};
-                }
-            };
-            self.send = function (data) {
-                //If logging is enabled, log.
-                if (self.logOutgoing) {
-                    console.log("Send: " + data);
-                }
-
-                //Send data to server
-                self.websocket.send(data);
-            };
-            self.ping = function (callback) {
-                self.websocket.send("2"); //The 'ping' bit. The 'pong' bit is "3".
-
-                //Queues the callback function in the ping handler queue
-                ping_callbacks.push(callback);
-            };
-
-            //The event handler for receiving a message. This will direct all the user-defined event handlers.
-            self.websocket.onmessage = function (event) {
-                if (event.data === "3" && ping_callbacks.length > 0) { //If the message is a pong, handle accordingly.
-                    //Store the first handler in the ping queue.
-                    var cb = ping_callbacks[0];
-
-                    //Remove it from the queue
-                    ping_callbacks.splice(0, 1);
-
-                    //Call it
-                    cb();
-                } else { //Otherwise (if the message is not a pong), handle normally.
-
-                    //Log if logging is enabled
-                    if (self.logIncoming) {
-                        console.log("Receive: " + data);
+                //noinspection JSUnusedGlobalSymbols
+                self.onReceive = function (handler) {
+                    handlers.incoming[handler_id++] = handler;
+                };
+                //noinspection JSUnusedGlobalSymbols
+                self.onSend = function (handler) {
+                    handlers.outgoing[handler_id++] = handler;
+                };
+                //noinspection JSUnusedGlobalSymbols
+                self.removeHandler = function (id) {
+                    //Check for the ID in each of the handler lists and delete accordingly.
+                    if (handlers.incoming[id]) {
+                        delete handlers.incoming[id];
+                    } else if (handlers.outgoing[id]) {
+                        delete handlers.outgoing[id];
+                    } else { //Otherwiser error
+                        throw {e: "[BombeMachine.removeHandler] Invalid ID."};
+                    }
+                };
+                self.send = function (data) {
+                    //If logging is enabled, log.
+                    if (self.logOutgoing) {
+                        console.log("Send: " + data);
                     }
 
-                    //Iterate through the list of handlers and call each
-                    Object.keys(handlers.incoming).forEach(function (key) {
-                        handlers.incoming[key](event.data);
-                    });
-                }
-            };
+                    //Send data to server
+                    self.websocket.send(data);
+                };
+                self.ping = function (callback) {
+                    self.websocket.send("2"); //The 'ping' bit. The 'pong' bit is "3".
 
-            //Auto-ping functionality. Required for the Secret Hitler server to keep the connection alive.
-            var autoPingID = null; //Store the setInterval ID to allow for removeInterval
-            self.startAutoPing = function (interval, timeout) {
+                    //Queues the callback function in the ping handler queue
+                    ping_callbacks.push(callback);
+                };
 
-                //Check if it's already running
-                if (autoPingID !== null) {
-                    throw {e: "[BombeMachine] Unable to start auto ping as it's already running."};
-                }
+                //The event handler for receiving a message. This will direct all the user-defined event handlers.
+                self.websocket.onmessage = function (event) {
+                    if (event.data === "3" && ping_callbacks.length > 0) { //If the message is a pong, handle accordingly.
+                        //Store the first handler in the ping queue.
+                        var cb = ping_callbacks[0];
 
-                //User can specify an interval, or use the server's requested interval
-                interval = interval || self.requiredPingInterval;
+                        //Remove it from the queue
+                        ping_callbacks.splice(0, 1);
 
-                //User can specify a timeout, or use the server's recommended timeout
-                timeout = timeout || self.pingTimeout;
+                        //Call it
+                        cb();
+                    } else { //Otherwise (if the message is not a pong), handle normally.
 
-                autoPingID = setInterval(function () {
-                    var timeout_watch = null;
-                    self.ping(function () {
-                        clearTimeout(timeout_watch);
-                    });
+                        //Log if logging is enabled
+                        if (self.logIncoming) {
+                            console.log("Receive: " + data);
+                        }
 
-                    timeout_watch = setTimeout(function () {
-                        throw {e: "[BombeMachine] Automatic ping timed out."};
-                    }, timeout);
-                }, interval);
-            };
-            //noinspection JSUnusedGlobalSymbols
-            self.stopAutoPing = function () {
-                //Check that it's actually running
-                if (autoPingID === null) {
-                    throw {e: "[BombeMachine] Unable to stop auto ping as it's not running."};
-                }
+                        //Iterate through the list of handlers and call each
+                        Object.keys(handlers.incoming).forEach(function (key) {
+                            handlers.incoming[key](event.data);
+                        });
+                    }
+                };
 
-                clearInterval(autoPingID);
+                //Auto-ping functionality. Required for the Secret Hitler server to keep the connection alive.
+                var autoPingID = null; //Store the setInterval ID to allow for removeInterval
+                self.startAutoPing = function (interval, timeout) {
 
-                autoPingID = null;
-            };
+                    //Check if it's already running
+                    if (autoPingID !== null) {
+                        throw {e: "[BombeMachine] Unable to start auto ping as it's already running."};
+                    }
 
-            //Finished. Call the callback.
-            callback();
+                    //User can specify an interval, or use the server's requested interval
+                    interval = interval || self.requiredPingInterval;
+
+                    //User can specify a timeout, or use the server's recommended timeout
+                    timeout = timeout || self.pingTimeout;
+
+                    autoPingID = setInterval(function () {
+                        var timeout_watch = null;
+                        self.ping(function () {
+                            clearTimeout(timeout_watch);
+                        });
+
+                        timeout_watch = setTimeout(function () {
+                            throw {e: "[BombeMachine] Automatic ping timed out."};
+                        }, timeout);
+                    }, interval * 0.75); //Make absolutely sure we meet the required interval
+                };
+                //noinspection JSUnusedGlobalSymbols
+                self.stopAutoPing = function () {
+                    //Check that it's actually running
+                    if (autoPingID === null) {
+                        throw {e: "[BombeMachine] Unable to stop auto ping as it's not running."};
+                    }
+
+                    clearInterval(autoPingID);
+
+                    autoPingID = null;
+                };
+
+                //Finished. Call the callback.
+                setup_cb();
+            }
+
+            //Complete the setup and then test
+            setup(function () {
+                //Test the connection
+                console.log("[BombeMachine] Finished setting up WebSocket connection. Testing now.");
+
+                var timeout_watch = null;
+                var handler = self.onIncoming(function (event) {
+                    clearTimeout(timeout_watch);
+
+                    if (event.data === "3probe") {
+                        console.log("Server responded as expected.");
+                    } else {
+                        console.log("Server did not respond as expected. Proceeding anyway.");
+                    }
+
+                    self.removeHandler(handler);
+
+                    console.log("Finalizing connection to server by sending protocol 5 (requesting server to flush cache and stuff)");
+                    self.send("5");
+
+                    console.log("WebSocket connection created to secrethitler.online.\nUse \"sechit_ws\" to send and receive requests.");
+                    callback();
+                });
+                self.send("2probe");
+
+                timeout_watch = setTimeout(function () {
+                    self.removeHandler(handler);
+                    console.log("Server test failed: ping timed out.");
+                }, self.pingTimeout);
+            });
         };
     };
 
