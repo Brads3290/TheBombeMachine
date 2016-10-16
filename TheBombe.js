@@ -96,8 +96,8 @@
                     return;
                 }
 
-                console.log("[Bombe Machine - First Contact] Server response code:" + xhrFirstContact.status); //Log the status. Should be 200.
-                console.log("[Bombe Machine - First Contact] Server allocated SID:\n" + JSONResponse["sid"]); //Log the JSON response for debugging.
+                console.log("[Bombe Machine - First Contact] Server response code: " + xhrFirstContact.status); //Log the status. Should be 200.
+                console.log("[Bombe Machine - First Contact] Server allocated SID: " + JSONResponse["sid"]); //Log the JSON response for debugging.
 
                 //Set the 'hasMadeFirstContact' flag
                 self.hasMadeFirstContact = true;
@@ -182,15 +182,15 @@
             var ping_callbacks = [];
 
             //noinspection JSUnusedGlobalSymbols
-            self.prototype.onReceive = function (handler) {
+            self.onReceive = function (handler) {
                 handlers.incoming[handler_id++] = handler;
             };
             //noinspection JSUnusedGlobalSymbols
-            self.prototype.onSend = function (handler) {
+            self.onSend = function (handler) {
                 handlers.outgoing[handler_id++] = handler;
             };
             //noinspection JSUnusedGlobalSymbols
-            self.prototype.removeHandler = function (id) {
+            self.removeHandler = function (id) {
                 //Check for the ID in each of the handler lists and delete accordingly.
                 if (handlers.incoming[id]) {
                     delete handlers.incoming[id];
@@ -200,7 +200,7 @@
                     throw {e: "[BombeMachine.removeHandler] Invalid ID."};
                 }
             };
-            self.prototype.send = function (data) {
+            self.send = function (data) {
                 //If logging is enabled, log.
                 if (self.logOutgoing) {
                     console.log("Send: " + data);
@@ -209,7 +209,7 @@
                 //Send data to server
                 self.websocket.send(data);
             };
-            self.prototype.ping = function (callback) {
+            self.ping = function (callback) {
                 self.websocket.send("2"); //The 'ping' bit. The 'pong' bit is "3".
 
                 //Queues the callback function in the ping handler queue
@@ -243,7 +243,7 @@
 
             //Auto-ping functionality. Required for the Secret Hitler server to keep the connection alive.
             var autoPingID = null; //Store the setInterval ID to allow for removeInterval
-            self.prototype.startAutoPing = function (interval, timeout) {
+            self.startAutoPing = function (interval, timeout) {
 
                 //Check if it's already running
                 if (autoPingID !== null) {
@@ -268,7 +268,7 @@
                 }, interval);
             };
             //noinspection JSUnusedGlobalSymbols
-            self.prototype.stopAutoPing = function () {
+            self.stopAutoPing = function () {
                 //Check that it's actually running
                 if (autoPingID === null) {
                     throw {e: "[BombeMachine] Unable to stop auto ping as it's not running."};
