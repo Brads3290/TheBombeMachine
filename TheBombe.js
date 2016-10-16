@@ -186,10 +186,12 @@
                 //noinspection JSUnusedGlobalSymbols
                 self.onReceive = function (handler) {
                     handlers.incoming[handler_id++] = handler;
+                    return handler_id;
                 };
                 //noinspection JSUnusedGlobalSymbols
                 self.onSend = function (handler) {
                     handlers.outgoing[handler_id++] = handler;
+                    return handler_id;
                 };
                 //noinspection JSUnusedGlobalSymbols
                 self.removeHandler = function (id) {
@@ -233,7 +235,7 @@
 
                         //Log if logging is enabled
                         if (self.logIncoming) {
-                            console.log("Receive: " + data);
+                            console.log("Receive: " + event.data);
                         }
 
                         //Iterate through the list of handlers and call each
@@ -291,10 +293,10 @@
                 console.log("[BombeMachine] Finished setting up WebSocket connection. Testing now.");
 
                 var timeout_watch = null;
-                var handler = self.onReceive(function (event) {
+                var handler = self.onReceive(function (data) {
                     clearTimeout(timeout_watch);
 
-                    if (event.data === "3probe") {
+                    if (data === "3probe") {
                         console.log("Server responded as expected.");
                     } else {
                         console.log("Server did not respond as expected. Proceeding anyway.");
