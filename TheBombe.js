@@ -291,7 +291,7 @@
                 console.log("[BombeMachine] Finished setting up WebSocket connection. Testing now.");
 
                 var timeout_watch = null;
-                var handler = self.onIncoming(function (event) {
+                var handler = self.onReceive(function (event) {
                     clearTimeout(timeout_watch);
 
                     if (event.data === "3probe") {
